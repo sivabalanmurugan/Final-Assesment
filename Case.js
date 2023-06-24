@@ -5,8 +5,8 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const app = express();
 
-
-
+// by sivabalana
+ 
 const connection = mysql.createConnection({ 
     host: 'localhost',
     port: 3306, // Specify the port separately, not in the host value
