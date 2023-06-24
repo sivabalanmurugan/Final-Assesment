@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Complaint Details</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+        
+<div class="container" style="width: 100%;">
+  <h2><%= title %></h2>
+  <a href="/add" class="btn btn-sm btn-info">ADD</a><br/><br/>
+  <table id="infoTable" class="table table-bordered table-hover">
+    <thead style="background-color:rgb(204, 194, 175);">
+      <tr>
+        <th>Title of your complaint</th>
+        <th style="width: 222.344px;">Choose Company/Brand</th>
+        <th style="width: 119.266p">Total amount of incident</th>
+        <th>Complaint details</th>
+        <th>Full Name</th>
+        <th>State</th>
+        <th>City</th>
+        <th>Zip Code</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% Info_table.forEach(function(user){ %>
+      <tr>
+        <td><%= user.title_of_complaint %></td>
+        <td><%= user.choose_company %></td>
+        <td><%= user.total_amount %></td>
+        <td><%= user.complaint_details %></td>
+        <td><%= user.full_name %></td>
+        <td><%= user.state %></td>
+        <td><%= user.city %></td>
+        <td><%= user.zip_code %></td>
+        <td>
+          <a href="edit/<%= user.id %>" class="btn btn-sm btn-primary">Edit</a>
+          <a href="delete/<%= user.id %>" class="btn btn-sm btn-danger delete-btn" data-userid="<%= user.id %>">Delete</a>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#infoTable').DataTable({
+      dom: 'lBfrtip', // Add the export options to the DataTable and display lengthMenu
+      buttons: [
+        'copy', 'csv', 'excel', 'pdf', 'print'
+      ],
+      lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ] // Specify the available length options
+    });
+  });
+ 
+  $(document).ready(function() {
+  $('#infoTable').on('click', '.delete-btn', function(event) {
+    event.preventDefault(); 
+    var userId = $(this).data('userid');
+    var result = confirm("Are you sure you want to mark this user as deleted?");
+    if (result) {
+      $.get('/delete/' + userId, function() {
+        location.reload();
+      });
+    }
+  });
+});
+
+</script>
+</body>
+</html>
