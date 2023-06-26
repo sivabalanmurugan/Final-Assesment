@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const app = express();
 
-// by sivabalana
  
 const connection = mysql.createConnection({ 
     host: 'localhost',
@@ -57,7 +56,7 @@ app.get('/add', (req, res) => {
   app.get('/newcompany', (req, res) => {
     const query = req.query.query;
   
-    const sql = "SELECT * FROM case_details.testing_table WHERE choose_company LIKE ? LIMIT 10";
+    const sql = "SELECT * FROM case_details.testing_table WHERE choose_company LIKE ? ORDER BY choose_company ASC LIMIT 10";
     const params = [`%${query}%`];
   
     connection.query(sql, params, (err, results) => {
