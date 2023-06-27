@@ -18,7 +18,7 @@
        #error-message1, #error-message2{
          color: red;
         }
-       a {
+       .link {
          top: -6px;
          margin-left: 0px;
          text-align: center;
@@ -31,6 +31,11 @@
          cursor: default;
          position: relative;
          display: inline-block;
+         color: #aaa;
+        }
+        label{
+          color: #aaa;
+          font-family: sans-serif;
         }
 
         input[type="text"],[type="number"]{
@@ -96,8 +101,8 @@
         }
 
         .step-item {
-          width: 65px;
-          height: 48px;
+          width: 40px;
+          height: 42px;
           border-radius: 50%;
           text-align: center;
           line-height: 40px;
@@ -123,12 +128,20 @@
 
         .dropdown-menu>li>a {
           display: contents;
-          padding: 30px 20px;
+          padding: 3px 20px;
           clear: both;
           font-weight: 700;
           line-height: 2.428571;
           color:black;
           pointer-events: auto;
+        }
+        .dropdown-menu>.active>a {
+          color: purple;
+          pointer-events: none;
+        }
+        .checkbox input[type=checkbox]
+        {
+          margin-left: 0px;
         }
 
       </style>
@@ -139,34 +152,34 @@
         <div class="container">
           <div class="step-wizard">
             <div class="step-item step1 enabled"> 1</div>
-            <label>Case details</label>
+            <label style="margin-right: 40px; color:#333">Case details</label>
             <div class="step-item step2 disabled"> 2</div>
-            <label>Personal info</label>
+            <label style="margin-right: 40px; color:#333">Personal info</label>
           </div>
         <div class="step step1 active">
           <h1 style="text-align: left;">Case details</h1>
           <div class="col-lg-5">
             <div class="form-group">
               <label for="title_of_complaint">Title of your complaint</label>
-              <a href="#" data-toggle="tooltip" title="Keep title between 3-10 words. Do not include any phone numbers or address.">?</a>
+              <span class="link" data-toggle="tooltip" title="Keep title between 3-10 words. Do not include any phone numbers or address.">?</span>
               <input type="text" class="form-control" id="title_of_complaint" placeholder="For example: Package not delivered" name="title_of_complaint">
             </div>
             <div class="form-group">
               <label for="choose_company">Choose Company/Brand:</label>
-              <a href="#" data-toggle="tooltip" title="Please choose/enter the company name against which you want to file a complaint.">?</a>
+              <span class="link" data-toggle="tooltip" title="Please choose/enter the company name against which you want to file a complaint.">?</span>
               <input type="text" class="form-control typeahead" id="choose_company" placeholder="Search company"  name="choose_company" autocomplete="off" >
               <label class="add-company-label" data-toggle="modal" data-target="#addCompanyModal">Add company</label>
             </div>
             <div class="form-group">
               <label for="total_amount">Total amount of loss from this incident:</label>
-              <a href="#" data-toggle="tooltip" title="Mention the total amount of loss you have suffered through this incident.">?</a>
+              <span class="link" data-toggle="tooltip" title="Mention the total amount of loss you have suffered through this incident.">?</span>
               <input type="number" class="form-control" id="total_amount" placeholder="₹0"  name="total_amount">
             </div>
           </div>
           <div class="col-lg-5">
             <div class="form-group">
               <label for="complaint_details">Complaint details:</label>
-              <a href="#" data-toggle="tooltip" title="Briefly describe what happened and how you have suffered/cheated/victimized. Do not include personally identifiable information. Do not write in CAPITAL letters.">?</a>
+              <span class="link" data-toggle="tooltip" title="Briefly describe what happened and how you have suffered/cheated/victimized. Do not include personally identifiable information. Do not write in CAPITAL letters.">?</span>
               <textarea class="form-control" cols="25" rows="4" id="complaint_details" placeholder="**Do not include your personally identifiable information. Your complaint will be publicly shown.** Describe what happened and how you have been victimized. Include date, name of the item, location, and any other important information that explains how you suffered mentally and financially." name="complaint_details"></textarea>
             </div>
             <div class="form-group">
@@ -174,8 +187,8 @@
               <textarea id="complaintEvidence"  rows="4" cols="50" placeholder="IMPORTANT: Evidence is a must.
                It is mandatory to attach evidence in your complaint. But you can attach them later by logging into your Voxya account after filing your complaint." readonly style="min-height: 130px; background-color: white; "></textarea>
             </div>
-            <div class="checkbox">
-            <label><input type="checkbox" value="">I agree with terms & conditions</label>
+            <div class="checkbox" style="margin: left 0px; ;">
+            <input type="checkbox" value=""><label>agree with <a href="https://voxya.com/term-&-service" target="_blank" style="color: #aaa;">terms & conditions</a></label>
             </div>
             <div id="error-message1"></div>
             <button type="button" class="btn btn-md btn-danger" id="nextButton" onclick="nextStep()">Next</button>
@@ -187,12 +200,12 @@
         <div class="col-lg-6">
           <div class="form-group">
             <label for="full_name">Full Name:</label>
-            <a href="#" data-toggle="tooltip" title="Enter your full name as mentioned on the Aadhar card, Voter ID, etc.">?</a>
+            <span class="link" data-toggle="tooltip" title="Enter your full name as mentioned on the Aadhar card, Voter ID, etc.">?</span>
             <input type="text" class="form-control" id="full_name" placeholder="Will be used in your complaint" name="full_name">
           </div>
           <div class="form-group">
             <label for="state">State:</label>
-            <a href="#" data-toggle="tooltip" title="Provide your state name so that we can share any updates on your complaint.">?</a>
+            <span class="link" data-toggle="tooltip" title="Provide your state name so that we can share any updates on your complaint.">?</span>
             <select name="state"  id="state" placeholder="--Select--" style="width: 100%; height: 54px;background-color: whitesmoke;">
               <option value="--Select--">--Select--</option>
               <option value="TamilNadu">Tamil Nadu</option>
@@ -202,14 +215,14 @@
           </div>
           <div class="form-group">
             <label for="city">City:</label>
-            <a href="#" data-toggle="tooltip" title="Provide your current city.">?</a>
+            <span class="link" data-toggle="tooltip" title="Provide your current city.">?</span>
             <select name="city" id="city" placeholder="--Select--" style="width: 100%; height: 54px;background-color: whitesmoke;">
               <option value="--Select--">--Select--</option>
             </select>             
           </div>
           <div class="form-group">
             <label for="zip_code">Zip Code:</label>
-            <a href="#" data-toggle="tooltip" title="Mention your zip code based on your city.">?</a>
+            <span class="link" data-toggle="tooltip" title="Mention your zip code based on your city.">?</span>
             <input type="tel" class="form-control" id="zip_code" maxlength="6" placeholder="Your Zip Code" name="zip_code">
           </div>
           <div id="error-message2"></div>
