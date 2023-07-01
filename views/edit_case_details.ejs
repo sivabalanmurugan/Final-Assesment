@@ -5,9 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+  
   <style>
     .step {
       display: none;
@@ -16,7 +14,9 @@
       display: block;
     }
     #error-message1, #error-message2{
+      position: absolute;
       color: red;
+      font-size: large;
     }
     .link {
       top: -6px;
@@ -65,7 +65,7 @@
       margin-left: 90%;
     }
     .add-company-label {
-     color: #D0021B!important;
+      color: #eb4654!important;
       border-bottom: 1px solid #d0021b;
       cursor: pointer;
       margin-left:75%;
@@ -140,8 +140,11 @@
     {
      margin-left: 0px;
     }
-
-
+    .required-symbol{
+          color: #d0021b;
+          font-size: medium;
+        }
+   
 
   </style>
   </head>
@@ -159,27 +162,27 @@
       <h1 style="text-align: left;">Case details</h1>  
       <div class="col-lg-5">
         <div class="form-group">
-          <label for="title_of_complaint">Title of your complaint</label>
+          <label for="title_of_complaint">Title of your complaint<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Keep title between 3-10 words. Do not include any phone numbers or address.">?</span>
-          <input type="text" class="form-control" id="title_of_complaint" placeholder="For example: Package not delivered" value="<%= user.title_of_complaint %>" name="title_of_complaint">
+          <input type="text" class="form-control" id="title_of_complaint" placeholder="For example: Package not delivered" value="<%= user.title_of_complaint %>" name="title_of_complaint" required>
         </div>
         <div class="form-group">
-          <label for="choose_company">Choose Company/Brand:</label>
+          <label for="choose_company">Choose Company/Brand:<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Please choose/enter the company name against which you want to file a complaint.">?</span>
-          <input type="text" class="form-control typeahead" id="choose_company" placeholder="Search company" value="<%= user.choose_company %>" name="choose_company" autocomplete="off" >
+          <input type="text" class="form-control typeahead" id="choose_company" placeholder="Search company" value="<%= user.choose_company %>" name="choose_company" autocomplete="off" required >
           <label class="add-company-label" data-toggle="modal" data-target="#addCompanyModal">Add company</label>
         </div>
         <div class="form-group">
-          <label for="total_amount">Total amount of loss from this incident:</label>
+          <label for="total_amount">Total amount of loss from this incident:<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Mention the total amount of loss you have suffered through this incident.">?</span>
-          <input type="number" class="form-control" id="total_amount" placeholder="₹0" value="<%= user.total_amount %>" name="total_amount">
+          <input type="text" class="form-control" id="total_amount" placeholder="₹0" value="<%= user.total_amount %>" name="total_amount">
         </div>
       </div>
       <div class="col-lg-5">
         <div class="form-group">
-          <label for="complaint_details">Complaint details:</label>
+          <label for="complaint_details">Complaint details:<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Briefly describe what happened and how you have suffered/cheated/victimized. Do not include personally identifiable information. Do not write in CAPITAL letters.">?</span>
-          <textarea class="form-control" cols="25" rows="4" id="complaint_details" placeholder="**Do not include your personally identifiable information. Your complaint will be publicly shown.** Describe what happened and how you have been victimized. Include date, name of the item, location, and any other important information that explains how you suffered mentally and financially." name="complaint_details"><%= user.complaint_details %></textarea>
+          <textarea class="form-control" cols="25" rows="4" id="complaint_details" placeholder="**Do not include your personally identifiable information. Your complaint will be publicly shown.** Describe what happened and how you have been victimized. Include date, name of the item, location, and any other important information that explains how you suffered mentally and financially." name="complaint_details" required><%= user.complaint_details %></textarea>
         </div>
         <div class="form-group">
           <label for="attach_complaint">Attach evidence to support complaint:</label>
@@ -187,25 +190,25 @@
          It is mandatory to attach evidence in your complaint. But you can attach them later by logging into your Voxya account after filing your complaint." readonly style="min-height: 130px; background-color: white; "></textarea>
         </div>
         <div class="checkbox" style="margin: left 0px; ;">
-          <input type="checkbox" value="" checked><label>agree with <a href="https://voxya.com/term-&-service" target="_blank" style="color: #aaa;text-decoration:underline;">terms & conditions</a></label>
+          <input type="checkbox" value="" checked><label>Agree with <a href="https://voxya.com/term-&-service" target="_blank" style="color: #aaa;text-decoration:underline;">terms & conditions</a></label>
           </div>
-        <div id="error-message1"></div>
+        
         <button type="button" class="btn btn-md btn-danger" id="nextButton" onclick="nextStep()">Next</button>
       </div>
     </div>
-
+    <div id="error-message1"></div>
     <div class="step step2">
       <h1 style="text-align: left;">Personal Information</h1>
       <div class="col-lg-6">
         <div class="form-group">
-          <label for="full_name">Full Name:</label>
+          <label for="full_name">Full Name:<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Enter your full name as mentioned on the Aadhar card, Voter ID, etc.">?</span>
-          <input type="text" class="form-control" id="full_name" placeholder="Will be used in your complaint" value="<%= user.full_name %>" name="full_name">
+          <input type="text" class="form-control" id="full_name" placeholder="Will be used in your complaint" value="<%= user.full_name %>" name="full_name" required>
         </div>
         <div class="form-group">
-          <label for="state">State:</label>
+          <label for="state">State:<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Provide your state name so that we can share any updates on your complaint.">?</span>
-          <select name="state" id="state" style="width: 100%; height: 54px;background-color: whitesmoke;">
+          <select name="state" id="state" style="width: 100%; height: 54px;background-color: whitesmoke;" required>
             <option value="--Select--">--Select--</option>
             <option value="TamilNadu" <%= user.state === 'TamilNadu' ? 'selected' : '' %>>TamilNadu</option>
             <option value="Kerala" <%= user.state === 'Kerala' ? 'selected' : '' %>>Kerala</option>
@@ -213,9 +216,9 @@
             </select>
         </div>
         <div class="form-group">
-          <label for="city">City:</label>
+          <label for="city">City:<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Provide your current city.">?</span>
-          <select name="city" id="city" style="width: 100%; height: 54px;background-color: whitesmoke;">
+          <select name="city" id="city" style="width: 100%; height: 54px;background-color: whitesmoke;" required>
             <option value="--Select--">--Select--</option>
             <option value="Salem" <%= user.city === 'Salem' ? 'selected' : '' %>>Salem</option>
             <option value="Coimbatore" <%= user.city === 'Coimbatore' ? 'selected' : '' %>>Coimbatore</option>
@@ -229,12 +232,14 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="zip_code">Zip Code:</label>
+          <label for="zip_code">Zip Code:<span class="required-symbol">*</span></label>
           <span class="link" data-toggle="tooltip" title="Mention your zip code based on your city.">?</span>
-          <input type="tel" class="form-control" id="zip_code" maxlength="6" placeholder="We may call you at this Number" value="<%= user.zip_code %>" name="zip_code">
+          <input type="tel" class="form-control" id="zip_code" maxlength="6" placeholder="We may call you at this Number" value="<%= user.zip_code %>" name="zip_code" required>
         </div>
+        
+        <button type="button" class="btn btn-md btn-info" id="backButton" onclick="moveBack()" style="position: absolute;">Back</button>
+        <button type="button" class="btn btn-md btn-danger" id="validateButton" onclick="validateForm()">Update</button>
         <div id="error-message2"></div>
-        <button type="button" class="btn btn-md btn-danger" id="validateButton" onclick="validateForm()">Submit</button>
       </div>
     </div>
   </div>
@@ -247,8 +252,8 @@
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label for="new_company">New Company Name:</label>
-            <input type="text" class="form-control" id="new_company" placeholder="Enter company name">
+            <label for="get_company">New Company Name:</label>
+            <input type="text" class="form-control" id="get_company" placeholder="Enter company name">
           </div>
         </div>
         <div class="modal-footer">
@@ -258,7 +263,10 @@
       </div>
     </div>
   </div>
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
   <script>
     $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
@@ -270,26 +278,49 @@
       function nextStep() {
         currentStep = 0;
         if (currentStep === 0) {
-      
-        if ($("#title_of_complaint").val() === "") {
-        $("#error-message1").text("Please fill title of complaint fields");
-        return;
-        }
-        if ($("#choose_company").val() === "") {
-        $("#error-message1").text("Please fill choose company fields");
-        return;
-        }
-        if ($("#complaint_details").val() === "") {
-        $("#error-message1").text("Please fill complaint details fields");
-        return; // Stop execution if fields are empty
-        }
-        if (!$('input[type="checkbox"]').is(':checked')) {
-        $("#error-message1").text("Please agree to the terms and conditions");
-        return;
-        } else {
-        $("#error-message1").text("");
-        }
-        }
+     
+            if ($("#title_of_complaint").val() === "") {
+              $("#error-message1").text("Please fill title of complaint field");
+              return;
+            } else if ($("#title_of_complaint").val().length < 3 || $("#title_of_complaint").val().length > 10) {
+              $("#error-message1").text("Title of complaint should have a minimum length of 3 characters and a maximum length of 10 characters");
+              return;
+            }
+
+            if ($("#choose_company").val() === "") {
+              $("#error-message1").text("Please fill choose company field");
+              return;
+            } else if ($("#choose_company").val().length < 3 || $("#choose_company").val().length > 45) {
+              $("#error-message1").text("Choose company should have a minimum length of 3 characters and a maximum length of 45 characters");
+              return;
+            }
+
+            if ($("#total_amount").val().length > 9) {
+                $("#error-message1").text("Amount should only contain maximum of 9 digits");
+                return;
+                }
+                var amount = $("#total_amount").val();
+                var amountRenge = /^\d+$/;
+                if (!amountRenge.test(amount)) {
+                  $("#error-message1").text("Amount should only contain digits");
+                  return;
+                }
+
+            if ($("#complaint_details").val() === "") {
+              $("#error-message1").text("Please fill complaint details field");
+              return;
+            } else if ($("#complaint_details").val().length > 60) {
+              $("#error-message1").text("Complaint details should not exceed 60 characters");
+              return;
+            }
+
+            if (!$('input[type="checkbox"]').is(':checked')) {
+              $("#error-message1").text("Please agree to the terms and conditions");
+              return;
+            } else {
+              $("#error-message1").text("");
+            }
+          }
 
       currentStep++;
       next.eq(currentStep).removeClass('disabled').addClass('enabled');
@@ -312,32 +343,55 @@
     nextStep();
     });
 
+    function moveBack() {
+      if(currentStep == 1) {
+       steps.eq(currentStep).removeClass('active');
+       steps.eq(0).addClass('active');
+       next.eq(currentStep).removeClass('enabled').addClass('disabled');
+       next.eq(currentStep - 1).removeClass('disabled').addClass('enabled');
+      }
+    }
+
     function validateForm() {
-    if (currentStep === 1) {
-    if ($("#full_name").val() === "") {
-      $("#error-message2").text("Please fill your full name");
-      event.preventDefault();
-      return;
-    }
-    if ($("#state").val() === "--Select--") {
-      $("#error-message2").text("Please choose your state");
-      event.preventDefault();
-      return;
-    }
-    if ($("#city").val() === "--Select--") {
-      $("#error-message2").text("Please choose your city");
-      event.preventDefault();
-      return;
-    }
-    if ($("#zip_code").val() === "") {
-      $("#error-message2").text("Please fill your zip code");
-      event.preventDefault();
-      return;
-    }
-    
+      if (currentStep === 1) {
+        if ($("#full_name").val() === "") {
+          $("#error-message2").text("Please fill your full name");
+          event.preventDefault();
+          return;
+        } else {
+        const fullName = $("#full_name").val();
+        if (fullName.length < 3 || fullName.length > 10) {
+          $("#error-message2").text("Full name should have a minimum length of 3 characters and a maximum length of 10 characters");
+          event.preventDefault();
+          return;
+        }
+        if (/\d/.test(fullName)) {
+          $("#error-message2").text("Full name should not contain digits");
+          event.preventDefault();
+          return;
+          }
+        }
+
+        if ($("#state").val() === "--Select--") {
+          $("#error-message2").text("Please choose your state");
+           event.preventDefault();
+           return;
+        }
+        if ($("#city").val() === "--Select--") {
+          $("#error-message2").text("Please choose your city");
+          event.preventDefault();
+          return;
+        }
+        var zipCode = $("#zip_code").val();
+        var zipCodePattern = /^\d{6}$/;
+        if (!zipCodePattern.test(zipCode)) {
+          $("#error-message2").text("Please enter a 6-digit zip code without characters.");
+          event.preventDefault();
+          return;
+        }
       $.ajax({
-      url: "/update",
-      type: "POST",
+        url: "/update/" + $("#id").val(), // Include the user ID in the URL
+        type: "PUT",
       data: {
         id: $("#id").val(),
         title_of_complaint: $("#title_of_complaint").val(),
@@ -363,50 +417,52 @@
     }
 
     function addCompany() {
-      var newCompany = $("#new_company").val();
-      if (newCompany !== "") {
-      $("#addCompanyModal").modal("hide");
-      $("#choose_company").val(newCompany);
-      }
-    }  
+      var getCompany = $("#get_company").val();
+      if (getCompany !== "") {
+        $("#addCompanyModal").modal("hide");
+        $("#choose_company").val(getCompany);
+        }
+    }
+
     $("#addCompanyModal").on("hidden.bs.modal", function() {
-    $("#new_company").val("");
+    $("#get_company").val("");
     });
 
     $('#state').on('change', function() {
-      var a = $(this).val();
-      var arr = [];
-      if (a === "TamilNadu") {
-        arr = ["--Select--","Salem", "Coimbatore", "Chennai"];
-      } else if (a === "Kerala") {
-        arr = ["--Select--","cochi", "palaght", "trisur"];
-      } else if (a === "Goa") {
-        arr = ["--Select--","margo", "panaji", "valpoi"];
+      var selectState = $(this).val();
+      var cityOption = [];
+      if (selectState === "TamilNadu") {
+        cityOption = ["--Select--","Salem", "Coimbatore", "Chennai"];
+      } else if (selectState === "Kerala") {
+       cityOption = ["--Select--","cochi", "palaght", "trisur"];
+      } else if (selectState === "Goa") {
+        cityOption = ["--Select--","margo", "panaji", "valpoi"];
       }
 
-      var string2 = "";
-      for (var i = 0; i < arr.length; i++) {
-        var selected = (arr[i] === $("#city").val()) ? "selected" : ""; // Check if the option should be selected
-        string2 += "<option value='" + arr[i] + "' " + selected + ">" + arr[i] + "</option>";
-      }
-     $("#city").html(string2);
-      console.log(arr);
-    });
+       var string2 = "";
+       for (var i = 0; i < cityOption.length; i++) {
+          var selected = (cityOption[i] === $("#city").val()) ? "selected" : ""; // Check if the option should be selected
+          string2 += "<option value='" + cityOption[i] + "' " + selected + ">" + cityOption[i] + "</option>";
+        }
+      $("#city").html(string2);
+        console.log(cityOption);
+     });
 
   
     $('#nextButton').click(nextStep);
     $('#addCompany').click(addCompany);
     $('#validateButton').click(validateForm);
+    $('#backButton').click(moveBack);
 
     $('input#choose_company').typeahead({
       source: function(query, process) {
-        return $.get('/newcompany', { query: query }, function(data) {
+        return $.get('/getCompany', { query: query }, function(data) {
          console.log(data);
          return process(data);
           });
         }
     });
-  }); 
+    }); 
   </script>
   </body>
 </html>
