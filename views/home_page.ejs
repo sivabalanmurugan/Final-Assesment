@@ -8,17 +8,6 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
-    <style>
-    #loadingMessage{
-      position: absolute;
-      background-color: rgba(158, 235, 108, 0.199);
-      text-align: center;
-      color: black;
-      margin-left: 32%;
-      font-size: x-large;
-      width: 30%;
-    }
-    </style>
     <body>
       <div class="container" style="width: 100%;">
         <h2><%= title %></h2>
@@ -60,6 +49,16 @@
           </tbody>
         </table>
       </div>
+      <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+              <p id="messageText"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
@@ -87,9 +86,10 @@
                     type: 'POST',
                     data: { ids: selectedIds },
                     success: function (response) {
-                      $('#loadingMessage').text('Selected Case details delete...');            
+                      $('#messageText').text('Selected case details are deleted...');
+                      $('#messageModal').modal('show');            
                       setTimeout(function () {
-                        $('#loadingMessage').hide();
+                        $('#messageModal').modal('hide');
                         location.reload();
                       }, 1000);
                     },
@@ -114,10 +114,11 @@
             var userId = $(this).data('userid');
             var result = confirm("Are you sure you want to mark this user deleted?");
             if (result) {
-              $('#loadingMessage').text('Case datails deleted...');
+              $('#messageText').text('Deleting case details...');
+              $('#messageModal').modal('show');
               setTimeout(function() {
                 $.get('/delete/' + userId, function() {
-                  $('#loadingMessage').hide();
+                  $('#messageModal').modal('hide');
                   location.reload();
                 });
               }, 1000); 
