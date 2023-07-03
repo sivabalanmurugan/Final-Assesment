@@ -13,13 +13,7 @@
         .step.active {
           display: block;
         }
-       #error-message1, #error-message2{
-         position: absolute;
-         color: red;
-         font-size: large;
-         
-        }
-       .link {
+        .link {
          top: -6px;
          margin-left: 0px;
          text-align: center;
@@ -144,12 +138,12 @@
         {
           margin-left: 0px;
         }
-        .error {
-          color: #e71b33;
-        }
         .required-symbol{
           color: #d0021b;
           font-size: medium;
+        }
+        .error-message {
+          color: red;
         }
 
       </style>
@@ -171,18 +165,20 @@
               <label for="title_of_complaint">Title of your complaint<span class="required-symbol">*</span></label>
               <span class="link" data-toggle="tooltip" title="Keep title between 3-10 words. Do not include any phone numbers or address.">?</span>
               <input type="text" class="form-control" id="title_of_complaint" placeholder="For example: Package not delivered" name="title_of_complaint" required>
-              <p></p>
+              <div id="title_of_complaint_error" class="error-message"></div>
             </div>
             <div class="form-group">
               <label for="choose_company">Choose Company/Brand:<span class="required-symbol">*</span></label>
               <span class="link" data-toggle="tooltip" title="Please choose/enter the company name against which you want to file a complaint.">?</span>
               <input type="text" class="form-control typeahead" id="choose_company" placeholder="Search company"  name="choose_company" autocomplete="off" required>
               <label class="add-company-label" data-toggle="modal" data-target="#addCompanyModal">Add company</label>
+              <div id="choose_company_error" class="error-message"></div>
             </div>
             <div class="form-group">
               <label for="total_amount">Total amount of loss from this incident:<span class="required-symbol">*</span></label>
               <span class="link" data-toggle="tooltip" title="Mention the total amount of loss you have suffered through this incident.">?</span>
               <input type="text" class="form-control" id="total_amount" placeholder="₹0"  name="total_amount" required>
+              <div id="total_amount_error" class="error-message"></div>
             </div>
           </div>
           <div class="col-lg-5">
@@ -190,21 +186,23 @@
               <label for="complaint_details">Complaint details:<span class="required-symbol">*</span></label>
               <span class="link" data-toggle="tooltip" title="Briefly describe what happened and how you have suffered/cheated/victimized. Do not include personally identifiable information. Do not write in CAPITAL letters.">?</span>
               <textarea class="form-control" cols="25" rows="4" id="complaint_details" placeholder="**Do not include your personally identifiable information. Your complaint will be publicly shown.** Describe what happened and how you have been victimized. Include date, name of the item, location, and any other important information that explains how you suffered mentally and financially." name="complaint_details" required></textarea>
+              <div id="complaint_details_error" class="error-message"></div>
             </div>
             <div class="form-group">
               <label for="attach_complaint">Attach evidence to support complaint:</label>
               <textarea id="complaintEvidence"  rows="4" cols="50" placeholder="IMPORTANT: Evidence is a must.
-               It is mandatory to attach evidence in your complaint. But you can attach them later by logging into your Voxya account after filing your complaint." readonly style="min-height: 130px; background-color: white; "></textarea>
+              It is mandatory to attach evidence in your complaint. But you can attach them later by logging into your Voxya account after filing your complaint." readonly style="min-height: 130px; background-color: white; "></textarea>
             </div>
             <div class="checkbox" style="margin: left 0px; ;">
             <input type="checkbox" value=""><label>Agree with <a href="https://voxya.com/term-&-service" target="_blank" style="color: #aaa;text-decoration:underline;">terms & conditions</a></label>
+            <div id="terms_conditions_error" class="error-message"></div>
             </div>
             
             <button type="button" class="btn btn-md btn-danger" id="nextButton" onclick="nextStep()">Next</button>
           </div>
           
         </div>
-        <div id="error-message1"></div>
+       
       </div>
       <div class="step step2">
         <h1 style="text-align: left;">Personal Information</h1>
@@ -213,6 +211,7 @@
             <label for="full_name">Full Name:<span class="required-symbol">*</span></label>
             <span class="link" data-toggle="tooltip" title="Enter your full name as mentioned on the Aadhar card, Voter ID, etc.">?</span>
             <input type="text" class="form-control" id="full_name" placeholder="Will be used in your complaint" name="full_name" required data-parsley-required-message="Required">
+            <div id="full_name_error" class="error-message"></div>
           </div>
           <div class="form-group">
             <label for="state">State:<span class="required-symbol">*</span></label>
@@ -223,23 +222,26 @@
               <option value="Kerala">Kerala</option>
               <option value="Goa">Goa</option>
             </select>
+            <div id="state_error" class="error-message"></div>
           </div>
           <div class="form-group">
             <label for="city">City:<span class="required-symbol">*</span></label>
             <span class="link" data-toggle="tooltip" title="Provide your current city.">?</span>
             <select name="city" id="city" placeholder="--Select--" style="width: 100%; height: 54px;background-color: whitesmoke;" required>
               <option value="--Select--">--Select--</option>
-            </select>             
+            </select> 
+            <div id="city_error" class="error-message"></div>            
           </div>
           <div class="form-group">
             <label for="zip_code">Zip Code:<span class="required-symbol">*</span></label>
             <span class="link" data-toggle="tooltip" title="Mention your zip code based on your city.">?</span>
             <input type="tel" class="form-control" id="zip_code" maxlength="6" placeholder="Your Zip Code" name="zip_code" required>
+            <div id="zip_code_error" class="error-message"></div>
           </div>
           
           <button type="button" class="btn btn-md btn-info" id="backButton" onclick="moveBack()" style="position: absolute;">Back</button>
           <button type="button" class="btn btn-md btn-danger" id="validateButton" onclick="validateForm()">Submit</button>
-          <div id="error-message2"></div>
+          
         </div>
       </div>
      </form>
@@ -277,49 +279,70 @@
 
           function nextStep() {
             currentStep = 0;
+
             if (currentStep === 0) {
-     
-                if ($("#title_of_complaint").val() === "") {
-                  $("#error-message1").text("Please fill title of complaint field");
-                  return;
-                } else if ($("#title_of_complaint").val().length < 3 || $("#title_of_complaint").val().length > 10) {
-                  $("#error-message1").text("Title of complaint should have a minimum length of 3 characters and a maximum length of 10 characters");
-                  return;
-                }
+              var titleOfComplaint = $("#title_of_complaint").val();
+              var chooseCompany = $("#choose_company").val();
+              var totalAmount = $("#total_amount").val();
+              var complaintDetails = $("#complaint_details").val();
 
-                if ($("#choose_company").val() === "") {
-                  $("#error-message1").text("Please fill choose company field");
-                  return;
-                } else if ($("#choose_company").val().length < 3 || $("#choose_company").val().length > 45) {
-                  $("#error-message1").text("Choose company should have a minimum length of 3 characters and a maximum length of 45 characters");
-                  return;
-                }
-                
-                if ($("#total_amount").val().length > 9) {
-                $("#error-message1").text("Amount should only contain maximum of 9 digits");
+              $("#title_of_complaint_error").text(titleOfComplaint === "" ? "Please fill the title of complaint field" : "");
+              $("#choose_company_error").text(chooseCompany === "" ? "Please fill the choose company field" : "");
+              $("#total_amount_error").text(totalAmount === "" ? "Please fill the total amount field" : "");
+              $("#complaint_details_error").text(complaintDetails === "" ? "Please fill the complaint details field" : "");
+              
+              if (titleOfComplaint === "") {
+                $("#title_of_complaint_error").text("Please fill the title of complaint field");
                 return;
+                } else if (titleOfComplaint.length < 3 || titleOfComplaint.length > 10) {
+                    $("#title_of_complaint_error").text("Title of complaint should have a minimum length of 3 characters and a maximum length of 10 characters");
+                    return;
+                } else {
+                  $("#title_of_complaint_error").text("");
                 }
-                var amount = $("#total_amount").val();
-                var amountRenge = /^\d+$/;
-                if (!amountRenge.test(amount)) {
-                  $("#error-message1").text("Amount should only contain digits");
-                  return;
+              if (chooseCompany === "") {
+                $("#choose_company_error").text("Please fill the choose company field");
+                return;
+                } else if (chooseCompany.length < 3 || chooseCompany.length > 45) {
+                $("#choose_company_error").text("Choose company should have a minimum length of 3 characters and a maximum length of 45 characters");
+                return;
+                } else if (!/^[a-zA-Z0-9\s]*$/.test(chooseCompany)) {
+                $("#choose_company_error").text("Choose company should not contain special characters");
+                return;
+                } else {
+                $("#choose_company_error").text("");
+              }              
+              if (totalAmount.length > 9) {
+                $("#total_amount_error").text("Amount should only contain a maximum of 9 digits");
+                return;
+              }
+              var amountRange = /^\d+$/;
+              if (!amountRange.test(totalAmount)) {
+                $("#total_amount_error").text("Amount should only contain digits");
+                return;
+                } else {
+                $("#total_amount_error").text("");
                 }
+              
+              if (complaintDetails === "") {
+                $("#complaint_details_error").text("Please fill the complaint details field");
+                return;
+                } else if (complaintDetails.length > 60) {
+                $("#complaint_details_error").text("Complaint details should not exceed 60 characters");
+                return;
+                } else if (!/^[a-zA-Z0-9\s]*$/.test(complaintDetails)) {
+                $("#complaint_details_error").text("Complaint details should not contain special characters");
+                return;
+                } else {
+                $("#complaint_details_error").text("");
+              }
 
-                if ($("#complaint_details").val() === "") {
-                  $("#error-message1").text("Please fill complaint details field");
-                  return;
-                } else if ($("#complaint_details").val().length > 60) {
-                  $("#error-message1").text("Complaint details should not exceed 60 characters");
-                  return;
+              if (!$('input[type="checkbox"]').is(':checked')) {
+                $("#terms_conditions_error").text("Please agree to the terms and conditions");
+                return;
+                } else {
+                $("#terms_conditions_error").text("");
                 }
-
-            if (!$('input[type="checkbox"]').is(':checked')) {
-              $("#error-message1").text("Please agree to the terms and conditions");
-              return;
-            } else {
-              $("#error-message1").text("");
-            }
             }
           currentStep++;
           next.eq(currentStep).removeClass('disabled').addClass('enabled');
@@ -354,39 +377,45 @@
 
          function validateForm() {
            if (currentStep === 1) {
+              var fullName = $("#full_name").val();
+              var state = $("#state").val();
+              var city = $("#city").val();
+              var zipCode = $("#zip_code").val();
+
+              $("#full_name_error").text(fullName === "" ? "Please fill your name" : "");
+              $("#state_error").text(state === "--Select--" ? "Please fill your state" : "");
+              $("#city_error").text(city === "--Select--" ? "Please fill your city" : "");
+              $("#zip_code_error").text(zipCode === "" ? "Please fill your 6-digit zip code" : "");
+
               if ($("#full_name").val() === "") {
-                $("#error-message2").text("Please fill your full name");
+                $("#full_name_error").text("Please fill your full name");
                 event.preventDefault();
                 return;
               } else {
-                const fullName = $("#full_name").val();
-                if (fullName.length < 3 || fullName.length > 10) {
-                  $("#error-message2").text("Full name should have a minimum length of 3 characters and a maximum length of 10 characters");
+                if (fullName.length < 3 || fullName.length > 15) {
+                  $("#full_name_error").text("Full name should have a minimum length of 3 characters and a maximum length of 15 characters");
                   event.preventDefault();
                   return;
                 }
                 if (/\d/.test(fullName)) {
-                  $("#error-message2").text("Full name should not contain digits");
+                  $("#full_name_error").text("Full name should not contain digits");
                   event.preventDefault();
                   return;
                 }
               }
-
              if ($("#state").val() === "--Select--") {
-               $("#error-message2").text("Please choose your state");
+               $("#state_error").text("Please choose your state");
                 event.preventDefault();
                return;
               }
              if ($("#city").val() === "--Select--") {
-               $("#error-message2").text("Please choose your city");
+               $("#city_error").text("Please choose your city");
                event.preventDefault();
                return;
               }
-               var zipCode = $("#zip_code").val();
-    
-               var zipCodePattern = /^\d{6}$/;
+              var zipCodePattern = /^\d{6}$/;
               if (!zipCodePattern.test(zipCode)) {
-                $("#error-message2").text("Please enter a 6-digit zip code without characters.");
+                $("#zip_code_error").text("Please enter a 6-digit zip code without characters.");
                  event.preventDefault();
                  return;
               }
@@ -440,12 +469,12 @@
               cityOption = ["--Select--","margo", "panaji", "valpoi"];
             }
 
-           var string2 = "";
+           var getValue = "";
            for (var i = 0; i < cityOption.length; i++) {
               var selected = (cityOption[i] === $("#city").val()) ? "selected" : ""; // Check if the option should be selected
-              string2 += "<option value='" + cityOption[i] + "' " + selected + ">" + cityOption[i] + "</option>";
+              getValue += "<option value='" + cityOption[i] + "' " + selected + ">" + cityOption[i] + "</option>";
             }
-           $("#city").html(string2);
+           $("#city").html(getValue);
            console.log(cityOption);
           });
   
@@ -462,83 +491,6 @@
               });
             }
           });
-          $("#myForm").validate({
-            rules: {
-              title_of_complaint: {
-                minlength:3,
-                maxlength:10
-              },
-              choose_company:{
-                minlength:3,
-                maxlength:45
-              },
-              total_amount:{
-                required: true,
-                digits: true,
-                maxlength:9
-              },
-              complaint_details:{
-                maxlength:60
-              },
-              full_name:{
-                minlength:3,
-                maxlength:10,
-              },
-              state:{
-                required: true
-              },
-              city:{
-                required: true
-              },
-              zip_code: {
-                digits: true,
-                minlength:6,
-                magxlength:6
-              }
-
-            },
-            messages: {
-              title_of_complaint: {
-              required:"Please enter the complaint title",
-              minlength:"Complaint title at least 3 characters",
-              maxlength:"Complaint title with in 10 characters"
-              },
-              choose_company: {
-              required:"Please Choose company",
-              minlength:"Company name at least 3 characters",
-              maxlength:"Company name with in 45 characters"
-             },
-             total_amount:{
-              required:"Please enter the amount",
-              digits: "Amount should only contain digits",
-              maxlength:"Amount should only contain digits and have a maximum of 9 digits"
-             },
-             complaint_details: {
-              required:"Please fill company Details",
-              maxlength:"Complaint details with in 60 characters"
-              },
-              full_name:{
-                required:"Please enter your name",
-                minlength:"name at least 3 characters",
-                maxlength:"Your name maximum 10 characters"
-               },
-              state:{
-                required:"Please choose your state"
-              },
-              city:{
-                required:"Please choose your city"
-              },
-              zip_code:{
-                required:"Please enter your zip code",
-                digits: "Zip Code should only contain digits",
-                minlength:"Enter 6 digit zip code",
-                maxlength:"Enter 6 digit zip code"
-              }
-            }
-           })
-
-
-
         });
       </script>
     </body>

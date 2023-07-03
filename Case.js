@@ -68,9 +68,9 @@ app.use(bodyParser.urlencoded({ extended: false}));
     });
   });
 
-  app.get('/edit/:userId', (req, res) => {
-    const userId = req.params.userId;
-    let sql = `SELECT * FROM complaint_list WHERE id = ${userId}`;
+  app.get('/edit/:caseId', (req, res) => {
+    const caseId = req.params.caseId;
+    let sql = `SELECT * FROM complaint_list WHERE id = ${caseId}`;
     let query = connection.query(sql, (err, result) => {
       if (err) throw err;
       res.render('edit_case_details', {
@@ -81,7 +81,7 @@ app.use(bodyParser.urlencoded({ extended: false}));
   });
 
   app.put('/update/:id', (req, res) => {
-    const userId = req.params.id;
+    const caseId = req.params.id;
     const editableData = {
       title_of_complaint: req.body.title_of_complaint,
       choose_company: req.body.choose_company,
@@ -97,16 +97,16 @@ app.use(bodyParser.urlencoded({ extended: false}));
       .filter(([key, value]) => value !== undefined) 
       .map(([key, value]) => `${key}='${value}'`)
       .join(', ');
-    const sql = `UPDATE complaint_list SET ${updateFields} WHERE id=${userId}`;
+    const sql = `UPDATE complaint_list SET ${updateFields} WHERE id=${caseId}`;
     connection.query(sql, (err, results) => {
       if (err) throw err;
       res.send('Successfully updated data'); 
     });
   });
   
-  app.get('/delete/:userId', (req, res) => {
-    const userId = req.params.userId;
-    let sql = `UPDATE complaint_list SET deleted = 0 WHERE id = ${userId}`;
+  app.get('/delete/:caseId', (req, res) => {
+    const caseId = req.params.caseId;
+    let sql = `UPDATE complaint_list SET deleted = 0 WHERE id = ${caseId}`;
     let query = connection.query(sql, (err, result) => {
         if (err) throw err;
         res.redirect('/');
