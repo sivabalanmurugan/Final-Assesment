@@ -8,6 +8,13 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
+    <style>
+      .dt-buttons {
+        display: none;
+        position: absolute;
+        margin-left: 150px;
+      }
+    </style>
     <body>
       <div class="container" style="width: 100%;">
         <h2><%= title %></h2>
@@ -21,6 +28,7 @@
               <th>Company/Brand</th>
               <th>Total amount</th>
               <th>Complaint details</th>
+              <th>complaint Evidence</th>
               <th>Full Name</th>
               <th>State</th>
               <th>City</th>
@@ -36,6 +44,11 @@
               <td><%= user.choose_company %></td>
               <td><%= user.total_amount %></td>
               <td><%= user.complaint_details %></td>
+              <td>
+                <% if (user.complaintEvidence) { %>
+                  <a href="<%= user.complaintEvidence %>"aria-hidden="true" download><%= user.document_name %></a>
+                <% } %>
+              </td>
               <td><%= user.full_name %></td>
               <td><%= user.state %></td>
               <td><%= user.city %></td>
@@ -65,12 +78,63 @@
       <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
       <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
       <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
-      <script>
+      <script>  
         $(document).ready(function () {
+          $("#selectAllCheckbox").change(function () {
+            $(".selectCheckbox").prop("checked", $(this).prop("checked"));
+            toggleButtonsVisibility();
+          });
+          $(".selectCheckbox").change(function () {
+            if (!$(this).prop("checked")) {
+              $("#selectAllCheckbox").prop("checked", false);
+              toggleButtonsVisibility();
+            } else {
+              if ($(".selectCheckbox:checked").length === $(".selectCheckbox").length) {
+                $("#selectAllCheckbox").prop("checked", true);
+              }
+                toggleButtonsVisibility();
+              }
+          });
+
+          function toggleButtonsVisibility() {
+            if ($(".selectCheckbox:checked").length > 0) {
+              $(".dt-buttons").show();
+            } else {
+              $(".dt-buttons").hide();
+            }
+          }
+
+          var exportOptions = {
+            rows: function (idx, data, node) {
+            var anyCheckboxSelected = $('.selectCheckbox:checked').length > 0;
+            var lengthMenuValue = $('#infoTable').DataTable().page.len();
+              return $(node).find('.selectCheckbox').prop('checked');
+            },
+            columns: ':not(:first-child, :last-child)'
+          };
           $('#infoTable').DataTable({
             dom: 'lBfrtip',
             buttons: [
-              'copy', 'csv', 'excel', 'pdf', 'print',
+              {
+                extend: 'copy',
+                exportOptions: exportOptions
+              },
+              {
+                extend: 'csv',
+                exportOptions: exportOptions
+              },
+              {
+                extend: 'excel',
+                exportOptions: exportOptions
+              },
+              {
+                extend: 'pdf',
+                exportOptions: exportOptions
+              },
+              {
+                extend: 'print',
+                exportOptions: exportOptions
+              },
               {
                 text: 'Delete',
                 className: 'btn-danger delete-btn',
@@ -86,7 +150,7 @@
                     type: 'POST',
                     data: { ids: selectedIds },
                     success: function (response) {
-                      $('#messageText').text('Selected case details are deleted...');
+                      $('#messageText').text('Successfully delete selected details...');
                       $('#messageModal').modal('show');            
                       setTimeout(function () {
                         $('#messageModal').modal('hide');
@@ -104,6 +168,9 @@
                 }
               }
             ],
+            columnDefs: [
+              { targets: 0, orderable: false } // Disable sorting for the first column (index 0)
+            ],
           lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
           });
         });
@@ -112,32 +179,17 @@
           $('#infoTable').on('click', '.delete-btn', function(event) {
             event.preventDefault(); 
             var userId = $(this).data('userid');
-            var result = confirm("Are you sure you want to mark this user deleted?");
+            var result = confirm("Are you sure you want to mark this case deleted?");
             if (result) {
-              $('#messageText').text('Deleting case details...');
+              $('#messageText').text('Successfully delete case details...');
               $('#messageModal').modal('show');
               setTimeout(function() {
                 $.get('/delete/' + userId, function() {
                   $('#messageModal').modal('hide');
                   location.reload();
                 });
-              }, 1000); 
+              }, 2000); 
             }
-          });
-        });
-
-        $(document).ready(function() {
-          const $selectAllCheckbox = $('#selectAllCheckbox');
-          const $checkboxes = $('.selectCheckbox');
-          const $iconBar = $('.icon-bar');
-  
-          $selectAllCheckbox.on('change', function() {
-            $checkboxes.prop('checked', $selectAllCheckbox.prop('checked'));
-            $iconBar.toggle($selectAllCheckbox.prop('checked'));
-          });
-
-          $checkboxes.on('change', function() {
-            $iconBar.toggle($checkboxes.is(':checked'));
           });
         });
       </script>

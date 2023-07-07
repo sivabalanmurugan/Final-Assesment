@@ -5,6 +5,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
       
       <style>
         .step {
@@ -33,23 +34,23 @@
           font-family: sans-serif;
         }
 
-        input[type="text"],[type="number"]{
-          padding: 25px;
+        input[type="text"],[type="tel"]{
+          padding: 10px;
+          height: 50px;
         }
 
         .container {
-          width: 100%;
+          width: 98%;
           position: absolute;
           margin-left: 20px;
           margin-top: 1%;
-  
         }
 
         .form-control {
          position: relative;
          vertical-align: top;
          background-color: #f8f8f8;
-         padding: 25px;
+         padding: 10px;
         }
         h1 {
           position: absolute;
@@ -67,12 +68,13 @@
           cursor: pointer;
           margin-left:75%;
         }
-
+        .form-group {
+         margin-bottom: 25px;
+        }
         .modal-header {
           background-color: #f44336;
           color: #fff;
         }
-   
         .col-lg-5 {
           margin-top: 10%;
           margin-left: 5%;
@@ -80,7 +82,7 @@
         .col-lg-6 {
           width: 37%;
           margin-top: 10%;
-          margin-left: 25%;
+          margin-left: 30%;
         }
         #complaintEvidence::placeholder { 
          color: red;
@@ -91,7 +93,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-bottom: 20px;
+          margin-bottom: 10px;
           gap: 6px;
         }
 
@@ -189,23 +191,23 @@
               <div id="complaint_details_error" class="error-message"></div>
             </div>
             <div class="form-group">
-              <label for="attach_complaint">Attach evidence to support complaint:</label>
+              <label for="complaintEvidence">Attach evidence to support complaint:</label>
               <textarea id="complaintEvidence"  rows="4" cols="50" placeholder="IMPORTANT: Evidence is a must.
               It is mandatory to attach evidence in your complaint. But you can attach them later by logging into your Voxya account after filing your complaint." readonly style="min-height: 130px; background-color: white; "></textarea>
+              <div style="display: flex;"><input type="file" id="files"><span id="trashIcon" class="fas fa-trash" style="display: none;"></span></div>
             </div>
             <div class="checkbox" style="margin: left 0px; ;">
             <input type="checkbox" value=""><label>Agree with <a href="https://voxya.com/term-&-service" target="_blank" style="color: #aaa;text-decoration:underline;">terms & conditions</a></label>
-            <div id="terms_conditions_error" class="error-message"></div>
-            </div>
-            
+            <div id="terms_conditions_error" class="error-message"></div>  
             <button type="button" class="btn btn-md btn-danger" id="nextButton" onclick="nextStep()">Next</button>
+            </div>
           </div>
           
         </div>
        
       </div>
       <div class="step step2">
-        <h1 style="text-align: left;">Personal Information</h1>
+        <h1 style="text-align: left; margin-left: 20px;">Personal Information</h1>
         <div class="col-lg-6">
           <div class="form-group">
             <label for="full_name">Full Name:<span class="required-symbol">*</span></label>
@@ -264,6 +266,21 @@
           </div>
         </div>
       </div>
+      <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: lightgreen;">
+              <h5 class="modal-title" id="successModalLabel">Success</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Form data submitted successfully.
+            </div>
+          </div>
+        </div>
+      </div>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -286,13 +303,13 @@
               var totalAmount = $("#total_amount").val();
               var complaintDetails = $("#complaint_details").val();
 
-              $("#title_of_complaint_error").text(titleOfComplaint === "" ? "Please fill the title of complaint field" : "");
-              $("#choose_company_error").text(chooseCompany === "" ? "Please fill the choose company field" : "");
-              $("#total_amount_error").text(totalAmount === "" ? "Please fill the total amount field" : "");
-              $("#complaint_details_error").text(complaintDetails === "" ? "Please fill the complaint details field" : "");
+              $("#title_of_complaint_error").text(titleOfComplaint === "" ? "Please fill the title of complaint" : "");
+              $("#choose_company_error").text(chooseCompany === "" ? "Please fill the choose company" : "");
+              $("#total_amount_error").text(totalAmount === "" ? "Please fill the total amount" : "");
+              $("#complaint_details_error").text(complaintDetails === "" ? "Please fill the complaint details" : "");
               
               if (titleOfComplaint === "") {
-                $("#title_of_complaint_error").text("Please fill the title of complaint field");
+                $("#title_of_complaint_error").text("Please fill the title of complaint");
                 return;
                 } else if (titleOfComplaint.length < 3 || titleOfComplaint.length > 10) {
                     $("#title_of_complaint_error").text("Title of complaint should have a minimum length of 3 characters and a maximum length of 10 characters");
@@ -301,7 +318,7 @@
                   $("#title_of_complaint_error").text("");
                 }
               if (chooseCompany === "") {
-                $("#choose_company_error").text("Please fill the choose company field");
+                $("#choose_company_error").text("Please fill the choose company");
                 return;
                 } else if (chooseCompany.length < 3 || chooseCompany.length > 45) {
                 $("#choose_company_error").text("Choose company should have a minimum length of 3 characters and a maximum length of 45 characters");
@@ -325,7 +342,7 @@
                 }
               
               if (complaintDetails === "") {
-                $("#complaint_details_error").text("Please fill the complaint details field");
+                $("#complaint_details_error").text("Please fill the complaint details");
                 return;
                 } else if (complaintDetails.length > 60) {
                 $("#complaint_details_error").text("Complaint details should not exceed 60 characters");
@@ -375,8 +392,8 @@
             }
           }
 
-         function validateForm() {
-           if (currentStep === 1) {
+          function validateForm() {
+            if (currentStep === 1) {
               var fullName = $("#full_name").val();
               var state = $("#state").val();
               var city = $("#city").val();
@@ -387,76 +404,137 @@
               $("#city_error").text(city === "--Select--" ? "Please fill your city" : "");
               $("#zip_code_error").text(zipCode === "" ? "Please fill your 6-digit zip code" : "");
 
-              if ($("#full_name").val() === "") {
-                $("#full_name_error").text("Please fill your full name");
+            if ($("#full_name").val() === "") {
+              $("#full_name_error").text("Please fill your full name");
+              event.preventDefault();
+              return;
+            } else {
+              if (fullName.length < 3 || fullName.length > 15) {
+                $("#full_name_error").text("Full name should have a minimum length of 3 characters and a maximum length of 15 characters");
                 event.preventDefault();
                 return;
-              } else {
-                if (fullName.length < 3 || fullName.length > 15) {
-                  $("#full_name_error").text("Full name should have a minimum length of 3 characters and a maximum length of 15 characters");
-                  event.preventDefault();
-                  return;
-                }
-                if (/\d/.test(fullName)) {
-                  $("#full_name_error").text("Full name should not contain digits");
-                  event.preventDefault();
-                  return;
-                }
               }
-             if ($("#state").val() === "--Select--") {
-               $("#state_error").text("Please choose your state");
+              if (/\d/.test(fullName)) {
+                $("#full_name_error").text("Full name should not contain digits");
                 event.preventDefault();
-               return;
+                return;
               }
-             if ($("#city").val() === "--Select--") {
-               $("#city_error").text("Please choose your city");
-               event.preventDefault();
-               return;
-              }
-              var zipCodePattern = /^\d{6}$/;
-              if (!zipCodePattern.test(zipCode)) {
-                $("#zip_code_error").text("Please enter a 6-digit zip code without characters.");
-                 event.preventDefault();
-                 return;
-              }
-            $.ajax({
-               url: "/save",
-               type: "POST",
-               data: {
-                 title_of_complaint: $("#title_of_complaint").val(),
-                 choose_company: $("#choose_company").val(),
-                 total_amount: $("#total_amount").val(),
-                 complaint_details: $("#complaint_details").val(),
-                 full_name: $("#full_name").val(),
-                 state: $("#state").val(),
-                 city: $("#city").val(),
-                 zip_code: $("#zip_code").val()
+            }
+            if ($("#state").val() === "--Select--") {
+              $("#state_error").text("Please choose your state");
+              event.preventDefault();
+              return;
+            }
+            if ($("#city").val() === "--Select--") {
+              $("#city_error").text("Please choose your city");
+              event.preventDefault();
+              return;
+            }
+            var zipCodePattern = /^\d{6}$/;
+            if (!zipCodePattern.test(zipCode)) {
+              $("#zip_code_error").text("Please enter a 6-digit zip code without characters.");
+              event.preventDefault();
+              return;
+            }
+
+            if ($("#files").get(0).files.length === 0) {
+              $.ajax({
+                url: "/save",
+                type: "POST",
+                data: {
+                  title_of_complaint: $("#title_of_complaint").val(),
+                  choose_company: $("#choose_company").val(),
+                  total_amount: $("#total_amount").val(),
+                  complaint_details: $("#complaint_details").val(),
+                  full_name: $("#full_name").val(),
+                  state: $("#state").val(),
+                  city: $("#city").val(),
+                  zip_code: $("#zip_code").val()
                 },
-              success: function (response) {
-               // Handle the success response if needed
-                console.log("Form data submitted successfully");
-                window.location.href = "/";       
-              },
-              error: function (error) {
-               // Handle the error response if needed
-               console.error("Error submitting form data:", error);
-               // Display an error message or perform appropriate actions
+                success: function (response) {
+                  // Handle the success response if needed
+                  $("#successModal").modal("show");
+                  setTimeout(function() {            
+                    $('#successModal').modal('hide');
+                    window.location.href = "/";  
+                  }, 3000);   
+                },
+                error: function (error) {
+                  // Handle the error response if needed
+                  console.error("Error submitting form data:", error);
+                  // Display an error message or perform appropriate actions
+                }
+              });
+            } else {
+              var fileInput = document.querySelector('#files');
+              var selectedFile = fileInput.files[0];
+              var documentName = selectedFile.name;
+              var file = selectedFile;
+                
+              function getBase64(file, documentName, callback) {
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function () {
+                  var base64Data = reader.result;
+                  callback(documentName, base64Data); // Pass the document name and base64 data to the callback function
+                };
+                reader.onerror = function (error) {
+                  console.log('Error: ', error);
+                  callback(null, null); // Pass null to the callback in case of an error
+                };
               }
-            });   
+              getBase64(file,documentName, function (documentName, complaintEvidence) {
+                $.ajax({
+                  url: "/save",
+                  type: "POST",
+                  data: {
+                    title_of_complaint: $("#title_of_complaint").val(),
+                    choose_company: $("#choose_company").val(),
+                    total_amount: $("#total_amount").val(),
+                    complaint_details: $("#complaint_details").val(),
+                    complaintEvidence: complaintEvidence,
+                    documentName: documentName,
+                    full_name: $("#full_name").val(),
+                    state: $("#state").val(),
+                    city: $("#city").val(),
+                    zip_code: $("#zip_code").val()
+                  },
+                  success: function (response) {
+                    $("#successModal").modal("show");
+                    setTimeout(function() {            
+                      $('#successModal').modal('hide');
+                      window.location.href = "/";  
+                    }, 3000);
+                  },
+                  error: function (error) {
+                    // Handle the error response if needed
+                    console.error("Error submitting form data:", error);
+                    // Display an error message or perform appropriate actions
+                  }
+                });
+              });
+            }
           }
           }
 
           function addCompany() {
             var getCompany = $("#get_company").val();
             if (getCompany !== "") {
-              $("#addCompanyModal").modal("hide");
-              $("#choose_company").val(getCompany);
+              $.ajax({
+                url: "/saveCompany",
+                method: "POST",
+                data: { company: getCompany },
+                success: function(response) {
+                  $("#addCompanyModal").modal("hide").on("hidden.bs.modal", function() {
+                    $("#choose_company").val(getCompany);
+                  });
+                },
+                error: function(error) {
+                  console.error("Error submitting form data:", error);
+                }
+              });
             }
           }
-
-         $("#addCompanyModal").on("hidden.bs.modal", function() {
-           $("#get_company").val("");
-          });
 
          $('#state').on('change', function() {
            var selectState = $(this).val();
@@ -464,9 +542,9 @@
            if (selectState === "TamilNadu") {
               cityOption = ["--Select--","Salem", "Coimbatore", "Chennai"];
             } else if (selectState === "Kerala") {
-              cityOption = ["--Select--","cochi", "palaght", "trisur"];
+              cityOption = ["--Select--","Cochin", "Palakkad", "Trisur"];
             } else if (selectState === "Goa") {
-              cityOption = ["--Select--","margo", "panaji", "valpoi"];
+              cityOption = ["--Select--","Margo", "Panaji", "Valpoi"];
             }
 
            var getValue = "";
@@ -489,6 +567,27 @@
                console.log(data);
                return process(data);
               });
+            }
+          });
+        });
+        $(document).ready(function() {
+          $('#files').on('change', function() {
+            var fileInput = $(this)[0];
+            var trashIcon = $('#trashIcon');
+            
+            if (fileInput.files.length > 0) {
+              trashIcon.show();
+            } else {
+              trashIcon.hide(); 
+            }
+          });
+          
+          $('#trashIcon').on('click', function() {
+            var confirmation = confirm('Are you sure you want to remove the file?'); 
+            if (confirmation) {
+            $('#files').val(''); 
+            documentName = null;
+            $(this).hide(); 
             }
           });
         });
