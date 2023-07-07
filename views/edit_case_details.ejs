@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
   <style>
     .step {
       display: none;
@@ -34,11 +34,12 @@
       font-family: sans-serif;
      }
 
-    input[type="text"],[type="number"]{
-      padding: 25px;
+    input[type="text"],[type="tell"]{
+      padding: 10px;
+      height: 50px;
     }
     .container {
-      width: 100%;
+      width: 98%;
       position: absolute;
       margin-left: 20px;
       margin-top: 1%;
@@ -47,7 +48,8 @@
       position: relative;
       vertical-align: top;
       background-color: #f8f8f8;
-      padding: 25px;
+      padding: 10px;
+      height: 50px;
     }
     h1 {
       position: absolute;
@@ -83,12 +85,14 @@
       color: red;
       width: 78%;
     }
-
+    .form-group {
+      margin-bottom: 25px;
+    }
     .step-wizard {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       gap: 6px;
     }
 
@@ -186,21 +190,21 @@
           <div id="complaint_details_error" class="error-message"></div>
         </div>
         <div class="form-group">
-          <label for="attach_complaint">Attach evidence to support complaint:</label>
+          <label for="complaintEvidence">Attach evidence to support complaint:</label>
           <textarea id="complaintEvidence" rows="4" cols="50" placeholder="IMPORTANT: Evidence is a must.
          It is mandatory to attach evidence in your complaint. But you can attach them later by logging into your Voxya account after filing your complaint." readonly style="min-height: 130px; background-color: white; "></textarea>
+         <div style="display: flex;"><input type="file" id="files" style="display: none;"><span id="documentName"><%= user.document_name %></span><span id="trashIcon" class="fas fa-trash" style="margin-left: 20px;"></span></div>
         </div>
         <div class="checkbox" style="margin: left 0px; ;">
           <input type="checkbox" value="" checked><label>Agree with <a href="https://voxya.com/term-&-service" target="_blank" style="color: #aaa;text-decoration:underline;">terms & conditions</a></label>
           <div id="terms_conditions_error" class="error-message"></div>  
-        </div>
-        
         <button type="button" class="btn btn-md btn-danger" id="nextButton" onclick="nextStep()">Next</button>
+       </div>
       </div>
     </div>
     
     <div class="step step2">
-      <h1 style="text-align: left;">Personal Information</h1>
+      <h1 style="text-align: left; margin-left: 20px;">Personal Information</h1>
       <div class="col-lg-6">
         <div class="form-group">
           <label for="full_name">Full Name:<span class="required-symbol">*</span></label>
@@ -216,8 +220,8 @@
             <option value="TamilNadu" <%= user.state === 'TamilNadu' ? 'selected' : '' %>>TamilNadu</option>
             <option value="Kerala" <%= user.state === 'Kerala' ? 'selected' : '' %>>Kerala</option>
             <option value="Goa" <%= user.state === 'Goa' ? 'selected' : '' %>>Goa</option>
-            </select>
-            <div id="state_error" class="error-message"></div>
+          </select>
+          <div id="state_error" class="error-message"></div>
         </div>
         <div class="form-group">
           <label for="city">City:<span class="required-symbol">*</span></label>
@@ -227,12 +231,12 @@
             <option value="Salem" <%= user.city === 'Salem' ? 'selected' : '' %>>Salem</option>
             <option value="Coimbatore" <%= user.city === 'Coimbatore' ? 'selected' : '' %>>Coimbatore</option>
             <option value="Chennai" <%= user.city === 'Chennai' ? 'selected' : '' %>>Chennai</option>
-            <option value="cochi" <%= user.city === 'cochi' ? 'selected' : '' %>>cochi</option>
-            <option value="palaght" <%= user.city === 'palaght' ? 'selected' : '' %>>palaght</option>
-            <option value="trisur" <%= user.city === 'trisur' ? 'selected' : '' %>>trisur</option>
-            <option value="margo" <%= user.city === 'margo' ? 'selected' : '' %>>margo</option>
-            <option value="panaji" <%= user.city === 'panaji' ? 'selected' : '' %>>panaji</option>
-            <option value="valpoi" <%= user.city === 'valpoi' ? 'selected' : '' %>>valpoi</option>
+            <option value="Cochin" <%= user.city === 'Cochin' ? 'selected' : '' %>>Cochin</option>
+            <option value="Palakkad" <%= user.city === 'Palakkad' ? 'selected' : '' %>>Palakkad</option>
+            <option value="Trisur" <%= user.city === 'Trisur' ? 'selected' : '' %>>Trisur</option>
+            <option value="Margo" <%= user.city === 'Margo' ? 'selected' : '' %>>Margo</option>
+            <option value="Panaji" <%= user.city === 'Panaji' ? 'selected' : '' %>>Panaji</option>
+            <option value="Valpoi" <%= user.city === 'Valpoi' ? 'selected' : '' %>>Valpoi</option>
           </select>
           <div id="city_error" class="error-message"></div>
         </div>
@@ -269,6 +273,21 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: lightgreen;">
+          <h5 class="modal-title" id="successModalLabel">Success</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Form data update successfully.
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
@@ -276,7 +295,7 @@
   <script>
     $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
-
+    
     const steps = $('.step');
     var next = $('.step-item');
     let currentStep = 0;
@@ -354,111 +373,169 @@
       steps.eq(currentStep).addClass('active');
       }
     
-    $('.step-item.step1').click(function() {
-    if(currentStep == 1){
-    steps.eq(currentStep).removeClass('active');
-    steps.eq(0).addClass('active');
-    next.eq(currentStep).removeClass('enabled').addClass('disabled');
-    next.eq(currentStep - 1).removeClass('disabled').addClass('enabled');
-     }
-    });
+      $('.step-item.step1').click(function() {
+        if(currentStep == 1){
+          steps.eq(currentStep).removeClass('active');
+          steps.eq(0).addClass('active');
+          next.eq(currentStep).removeClass('enabled').addClass('disabled');
+          next.eq(currentStep - 1).removeClass('disabled').addClass('enabled');
+        }
+      });
   
-    $('.step-item.step2').click(function() {
-    currentStep = 0;
-    nextStep();
-    });
+      $('.step-item.step2').click(function() {
+        currentStep = 0;
+        nextStep();
+      });
 
-    function moveBack() {
-      if(currentStep == 1) {
-       steps.eq(currentStep).removeClass('active');
-       steps.eq(0).addClass('active');
-       next.eq(currentStep).removeClass('enabled').addClass('disabled');
-       next.eq(currentStep - 1).removeClass('disabled').addClass('enabled');
+      function moveBack() {
+        if(currentStep == 1) {
+          steps.eq(currentStep).removeClass('active');
+          steps.eq(0).addClass('active');
+          next.eq(currentStep).removeClass('enabled').addClass('disabled');
+          next.eq(currentStep - 1).removeClass('disabled').addClass('enabled');
+        }
       }
-    }
 
-    function validateForm() {
-      if (currentStep === 1) {
-        var fullName = $("#full_name").val();
-        var state = $("#state").val();
-        var city = $("#city").val();
-        var zipCode = $("#zip_code").val();
+      function validateForm() {
+        if (currentStep === 1) {
+          var fullName = $("#full_name").val();
+          var state = $("#state").val();
+          var city = $("#city").val();
+          var zipCode = $("#zip_code").val();
 
-        $("#full_name_error").text(fullName === "" ? "Please fill your name" : "");
-        $("#state_error").text(state === "--Select--" ? "Please fill your state" : "");
-        $("#city_error").text(city === "--Select--" ? "Please fill your city" : "");
-        $("#zip_code_error").text(zipCode === "" ? "Please fill your 6-digit zip code" : "");
+          $("#full_name_error").text(fullName === "" ? "Please fill your name" : "");
+          $("#state_error").text(state === "--Select--" ? "Please fill your state" : "");
+          $("#city_error").text(city === "--Select--" ? "Please fill your city" : "");
+          $("#zip_code_error").text(zipCode === "" ? "Please fill your 6-digit zip code" : "");
 
-        if ($("#full_name").val() === "") {
-          $("#full_name_error").text("Please fill your full name");
-          event.preventDefault();
-          return;
+          if ($("#full_name").val() === "") {
+            $("#full_name_error").text("Please fill your full name");
+            event.preventDefault();
+            return;
           } else {          
             if (fullName.length < 3 || fullName.length > 20) {
               $("#full_name_error").text("Full name should have a minimum length of 3 characters and a maximum length of 20 characters");
               event.preventDefault();
                return;
-           }
+            }
            if (/\d/.test(fullName)) {
             $("#full_name_error").text("Full name should not contain digits");
             event.preventDefault();
             return;
             }
           }
-        if ($("#state").val() === "--Select--") {
-          $("#state_error").text("Please choose your state");
-          event.preventDefault();
-          return;
+          if ($("#state").val() === "--Select--") {
+            $("#state_error").text("Please choose your state");
+            event.preventDefault();
+            return;
           }
-         if ($("#city").val() === "--Select--") {
-           $("#city_error").text("Please choose your city");
-           event.preventDefault();
-           return;
+          if ($("#city").val() === "--Select--") {
+            $("#city_error").text("Please choose your city");
+            event.preventDefault();
+            return;
           }
-         var zipCodePattern = /^\d{6}$/;
+          var zipCodePattern = /^\d{6}$/;
           if (!zipCodePattern.test(zipCode)) {
             $("#zip_code_error").text("Please enter a 6-digit zip code without characters.");
             event.preventDefault();
-           return;
+            return;
           }
-      $.ajax({
-        url: "/update/" + $("#id").val(), // Include the user ID in the URL
-        type: "PUT",
-      data: {
-        id: $("#id").val(),
-        title_of_complaint: $("#title_of_complaint").val(),
-        choose_company: $("#choose_company").val(),
-        total_amount: $("#total_amount").val(),
-        complaint_details: $("#complaint_details").val(),
-        full_name: $("#full_name").val(),
-        state: $("#state").val(),
-        city: $("#city").val(),
-        zip_code: $("#zip_code").val()
-        },
-        success: function (response) {
-        console.log("Form data submitted successfully");
-        window.location.href = "/";
-        
-        },
-        error: function (error) {
-        
-        console.error("Error submitting form data:", error);
-        }
-      });
+          if ($("#files").get(0).files.length === 0) {
+            $.ajax({
+              url: "/update/" + $("#id").val(), 
+              type: "PUT",
+              data: {
+                id: $("#id").val(),
+                title_of_complaint: $("#title_of_complaint").val(),
+                choose_company: $("#choose_company").val(),
+                total_amount: $("#total_amount").val(),
+                complaint_details: $("#complaint_details").val(),
+                full_name: $("#full_name").val(),
+                state: $("#state").val(),
+                city: $("#city").val(),
+                zip_code: $("#zip_code").val()
+              },
+              success: function (response) {
+                $("#successModal").modal("show");
+                  setTimeout(function() {            
+                    $('#successModal').modal('hide');
+                    window.location.href = "/";  
+                  }, 2000);        
+              },
+              error: function (error) {  
+                console.error("Error submitting form data:", error);
+              }
+            });
+          } else {
+            var fileInput = document.querySelector('#files');
+            var selectedFile = fileInput.files[0];
+            var documentName = selectedFile.name;
+            var file = selectedFile;
+                
+            function getBase64(file, documentName, callback) {
+              var reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = function () {
+                var base64Data = reader.result;
+                callback(documentName, base64Data); // Pass the document name and base64 data to the callback function
+              };
+              reader.onerror = function (error) {
+                console.log('Error: ', error);
+                callback(null, null); // Pass null to the callback in case of an error
+              };
+            }
+            getBase64(file,documentName, function (documentName, complaintEvidence) {
+              $.ajax({
+                url: "/update/" + $("#id").val(), 
+                type: "PUT",
+                data: {
+                  id: $("#id").val(),
+                  title_of_complaint: $("#title_of_complaint").val(),
+                  choose_company: $("#choose_company").val(),
+                  total_amount: $("#total_amount").val(),
+                  complaint_details: $("#complaint_details").val(),
+                  complaintEvidence: complaintEvidence,
+                  documentName: documentName,
+                  full_name: $("#full_name").val(),
+                  state: $("#state").val(),
+                  city: $("#city").val(),
+                  zip_code: $("#zip_code").val()
+                },
+                success: function (response) {
+                  $("#successModal").modal("show");
+                  setTimeout(function() {            
+                    $('#successModal').modal('hide');
+                    window.location.href = "/";  
+                  }, 2000);
+                },
+                error: function (error) {
+                  // Handle the error response if needed
+                  console.error("Error submitting form data:", error);
+                  // Display an error message or perform appropriate actions
+                }
+              });
+            });
+          }    
+      }
     }
-    }
-
     function addCompany() {
       var getCompany = $("#get_company").val();
       if (getCompany !== "") {
-        $("#addCompanyModal").modal("hide");
-        $("#choose_company").val(getCompany);
-        }
+        $.ajax({
+          url: "/saveCompany",
+          method: "POST",
+          data: { company: getCompany },
+          success: function(response) {
+            $("#addCompanyModal").modal("hide").on("hidden.bs.modal", function() {
+              $("#choose_company").val(getCompany);
+            });
+          },
+          error: function(error) {
+            console.error("Error submitting form data:", error);
+          }
+        });
+      }
     }
-
-    $("#addCompanyModal").on("hidden.bs.modal", function() {
-    $("#get_company").val("");
-    });
 
     $('#state').on('change', function() {
       var selectState = $(this).val();
@@ -466,9 +543,9 @@
       if (selectState === "TamilNadu") {
         cityOption = ["--Select--","Salem", "Coimbatore", "Chennai"];
       } else if (selectState === "Kerala") {
-       cityOption = ["--Select--","cochi", "palaght", "trisur"];
+       cityOption = ["--Select--","Cochin", "Palakkad", "Trisur"];
       } else if (selectState === "Goa") {
-        cityOption = ["--Select--","margo", "panaji", "valpoi"];
+        cityOption = ["--Select--","Margo", "Panaji", "Valpoi"];
       }
 
        var getValue = "";
@@ -494,6 +571,31 @@
           });
         }
     });
+    });
+    $(document).ready(function() {
+      if ($('#documentName').text().trim() === '') {
+        $('#files').show(); 
+        $('#trashIcon').hide(); 
+      }
+      $('#files').on('change', function() {
+        var fileInput = $(this)[0];
+        var trashIcon = $('#trashIcon');    
+        if (fileInput.files.length > 0) {
+          trashIcon.show(); 
+          } else {
+            trashIcon.hide(); 
+          }
+      });
+          
+      $('#trashIcon').on('click', function() {
+        var confirmation = confirm('Are you sure you want to remove the file?'); // Display the confirmation message 
+        if (confirmation) {
+          $('#files').val(''); // Clear the selected file
+          $(this).hide(); // Hide the trash icon
+          $('#files').show();
+          $('#documentName').text('');
+        }
+      });
     }); 
   </script>
   </body>

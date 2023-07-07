@@ -42,7 +42,7 @@ app.use(bodyParser.urlencoded({ extended: false}));
   });
   
   app.post('/save', (req, res) => {
-    let data = { title_of_complaint: req.body.title_of_complaint, choose_company: req.body.choose_company, total_amount: req.body.total_amount, complaint_details: req.body.complaint_details,full_name: req.body.full_name, state: req.body.state, city: req.body.city, zip_code: req.body.zip_code};
+    let data = { title_of_complaint: req.body.title_of_complaint, choose_company: req.body.choose_company, total_amount: req.body.total_amount, complaint_details: req.body.complaint_details,complaintEvidence: req.body.complaintEvidence,document_name: req.body.documentName,full_name: req.body.full_name, state: req.body.state, city: req.body.city, zip_code: req.body.zip_code};
     let sql = "INSERT INTO complaint_list SET ?";
     let query = connection.query(sql, data, (err, results) => {
       if (err)  throw err;
@@ -52,21 +52,32 @@ app.use(bodyParser.urlencoded({ extended: false}));
 
   app.get('/getCompany', (req, res) => { 
     const query = req.query.query;
-  
-    const sql = "SELECT DISTINCT * FROM case_details.complaint_list WHERE choose_company LIKE ? ORDER BY choose_company ASC LIMIT 10";
+    const sql = "SELECT DISTINCT company_list FROM case_details.company_details WHERE company_list LIKE ? ORDER BY company_list ASC LIMIT 10";
     const params = [`%${query}%`];
-  
     connection.query(sql, params, (err, results) => {
       if (err) {
         console.error('Error executing MySQL query:', err);
         res.status(500).json([]);
         return;
       }
-  
-      const choose_company = results.map((row) => row.choose_company);
+      const choose_company = results.map((row) => row.company_list);
       res.json(choose_company);
     });
   });
+
+  app.post('/saveCompany', (req, res) => {
+    let company = req.body.company;
+    let sql = "INSERT INTO case_details.company_details (company_list) VALUES (?)";
+    connection.query(sql, [company], (err, results) => {
+      if (err) {
+        console.error("Error inserting company:", err);
+        res.status(500).json({ error: "Failed to save company" });
+      } else {
+        res.status(200).json({ message: "Company saved successfully" });
+      }
+      });  
+    });
+
 
   app.get('/edit/:caseId', (req, res) => {
     const caseId = req.params.caseId;
@@ -87,6 +98,8 @@ app.use(bodyParser.urlencoded({ extended: false}));
       choose_company: req.body.choose_company,
       total_amount: req.body.total_amount,
       complaint_details: req.body.complaint_details,
+      complaintEvidence: req.body.complaintEvidence,
+      document_name: req.body.documentName,
       full_name: req.body.full_name,
       state: req.body.state,
       city: req.body.city,
