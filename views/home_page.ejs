@@ -19,7 +19,7 @@
       <div class="container" style="width: 100%;">
         <h2><%= title %></h2>
         <div id="loadingMessage"></div>
-        <a href="/add" class="btn btn-sm btn-info">ADD</a></br></br> 
+        <a href="/add" class="btn btn-sm btn-warning">ADD COMPLAINT</a></br></br> 
         <table id="infoTable" class="table table-bordered table-hover">
           <thead style="background-color:rgb(204, 194, 175);">
             <tr>  
@@ -27,8 +27,6 @@
               <th>Complaint</th>
               <th>Company/Brand</th>
               <th>Total amount</th>
-              <th>Complaint details</th>
-              <th>complaint Evidence</th>
               <th>Full Name</th>
               <th>State</th>
               <th>City</th>
@@ -43,19 +41,12 @@
               <td><%= user.title_of_complaint %></td>
               <td><%= user.choose_company %></td>
               <td><%= user.total_amount %></td>
-              <td><%= user.complaint_details %></td>
-              <td>
-                <% if (user.complaintEvidence) { %>
-                  <a href="<%= user.complaintEvidence %>"aria-hidden="true" download><%= user.document_name %></a>
-                <% } %>
-              </td>
               <td><%= user.full_name %></td>
               <td><%= user.state %></td>
               <td><%= user.city %></td>
               <td><%= user.zip_code %></td>
               <td>
-                <a href="edit/<%= user.id %>" class="btn btn-sm btn-primary">Edit</a>
-                <a href="delete/<%= user.id %>" class="btn btn-sm btn-danger delete-btn" data-userid="<%= user.id %>">Delete</a>
+                <a href="fetchFile/<%= user.id %>" class="btn btn-sm btn-primary">View</button>
               </td>
             </tr>
             <% }); %>
@@ -71,7 +62,6 @@
           </div>
         </div>
       </div>
-
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
@@ -192,6 +182,33 @@
             }
           });
         });
+        $(document).ready(function() {
+          $('.view-btn').click(function() {
+            var row = $(this).closest('tr');
+            var complaintTitle = row.find('td:eq(1)').text();
+            var companyName = row.find('td:eq(2)').text();
+            var totalAmount = row.find('td:eq(3)').text();
+            var complaintDetails = row.find('td:eq(4)').text();
+            var complaintEvidenceLink = row.find('td:eq(5) a');
+            var complaintEvidence = complaintEvidenceLink.attr('href');
+            var documentName = complaintEvidenceLink.text();
+            var fullName = row.find('td:eq(6)').text();
+            var state = row.find('td:eq(7)').text();
+            var city = row.find('td:eq(8)').text();
+            var zipCode = row.find('td:eq(9)').text();
+
+            $('#complaintTitle').text(complaintTitle);
+            $('#companyName').text(companyName);
+            $('#totalAmount').text(totalAmount);
+            $('#complaintDetails').text(complaintDetails);
+            $('#complaintEvidence').text(documentName);
+            $('#fullName').text(fullName);
+            $('#state').text(state);
+            $('#city').text(city);
+            $('#zipCode').text(zipCode);
+          });
+        });
+
       </script>
     </body>
   </html>

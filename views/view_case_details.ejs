@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <title>Complaint Details</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <style>
+      p {
+        margin-left: 3%;
+        font-size: large;
+      } 
+      .top {
+        margin-top: 10px;
+        margin-left: 100px;
+        margin-right: 100px;
+      }
+      h2 {
+        text-decoration: underline;
+      }
+      h4 {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      }
+      body {
+        background-color: blanchedalmond;
+      }
+      .complaint-evidence {
+        height: 500px;
+        width: 90%;
+        background-color: antiquewhite;
+      }
+      .col-md-6 {
+        background-color: antiquewhite;
+      }
+      
+    </style>
+    <body>
+        <div class="form-container" style="width: 100%; background-color: blanchedalmond;">
+          <div class="header" style="text-align: center;" >
+            <h2>Complaint Details</h2>
+          </div>
+          <div class="top" style="margin-top: 30px;">
+            <div class="complaint-details col-md-6">
+              <h4>Complaint:</h4><p><%= user[0].title_of_complaint %></p>
+              <h4>Company/Brand:</h4><p><%= user[0].choose_company %></p>
+              <h4>Amount:</h4><p><%= user[0].total_amount %></p>
+              <h4>Complaint Evidence:</h4><p><% for (var i = 0; i < user.length; i++) { %>
+              <a href="<%= user[i].complaintEvidence %>"aria-hidden="true" download><%= user[i].document_name %>,</a>
+              <% } %></p>
+            </div>
+            <div class="personal-details col-md-6">
+              <h4>Full_name:</h4><p><%= user[0].full_name %></p>
+              <h4>State:</h4><p><%= user[0].state %></p>
+              <h4>City:</h4><p><%= user[0].city %></p>
+              <h4>Zip Code:</h4><p><%= user[0].zip_code %></p>
+            </div> 
+          </div>
+          <div class="complaint-evidence" style="margin-left: 100px;">
+            <h4>Complaint Details:</h4><p><%= user[0].complaint_details %></p>
+          </div>
+          <div style="text-align: center; height: 50px;">
+            <a href="/" class="btn btn-sm btn-info">Back</a>
+            <a href="/edit/<%= user[0].id %>" class="btn btn-sm btn-primary">Edit</a>
+            <a href="/delete/<%= user.id %>" class="btn btn-sm btn-danger delete-btn" data-userid="<%= user[0].id %>">Delete</a>
+          </div>
+          </div>
+  <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p id="messageText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $('.delete-btn').on('click', function(event) {
+      event.preventDefault(); // Prevent the default link behavior
+
+      var userId = $(this).data('userid');
+            var result = confirm("Are you sure you want to delete this case? ");
+            if (result) {
+              $('#messageText').text('Successfully delete case details...');
+              $('#messageModal').modal('show');
+              setTimeout(function() {
+                $.get('/delete/' + userId, function() {
+                  $('#messageModal').modal('hide');
+                  location.href = '/';
+                });
+              }, 2000); 
+            }
+        });
+    });
+</script>
+  </body>
+
+  </html>
+  

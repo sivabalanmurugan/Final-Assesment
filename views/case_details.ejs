@@ -147,6 +147,24 @@
         .error-message {
           color: red;
         }
+        #fileList {
+          list-style-type: none;
+          padding: 0;
+        }
+
+        .fileItem {
+          display: flex;
+          align-items: center;
+        }
+
+        .fileName {
+          margin-right: 10px;
+        }
+
+        .removeFile {
+          color: red;
+          cursor: pointer;
+        }
 
       </style>
     </head>
@@ -194,17 +212,15 @@
               <label for="complaintEvidence">Attach evidence to support complaint:</label>
               <textarea id="complaintEvidence"  rows="4" cols="50" placeholder="IMPORTANT: Evidence is a must.
               It is mandatory to attach evidence in your complaint. But you can attach them later by logging into your Voxya account after filing your complaint." readonly style="min-height: 130px; background-color: white; "></textarea>
-              <div style="display: flex;"><input type="file" id="files"><span id="trashIcon" class="fas fa-trash" style="display: none;"></span></div>
+              <input type="file" id="files" multiple><ul id="fileList"></ul>
             </div>
             <div class="checkbox" style="margin: left 0px; ;">
             <input type="checkbox" value=""><label>Agree with <a href="https://voxya.com/term-&-service" target="_blank" style="color: #aaa;text-decoration:underline;">terms & conditions</a></label>
             <div id="terms_conditions_error" class="error-message"></div>  
-            <button type="button" class="btn btn-md btn-danger" id="nextButton" onclick="nextStep()">Next</button>
+            <button type="button" class="btn btn-md btn-danger" id="nextButton">Next</button>
             </div>
-          </div>
-          
-        </div>
-       
+          </div>  
+        </div> 
       </div>
       <div class="step step2">
         <h1 style="text-align: left; margin-left: 20px;">Personal Information</h1>
@@ -239,11 +255,9 @@
             <span class="link" data-toggle="tooltip" title="Mention your zip code based on your city.">?</span>
             <input type="tel" class="form-control" id="zip_code" maxlength="6" placeholder="Your Zip Code" name="zip_code" required>
             <div id="zip_code_error" class="error-message"></div>
-          </div>
-          
-          <button type="button" class="btn btn-md btn-info" id="backButton" onclick="moveBack()" style="position: absolute;">Back</button>
-          <button type="button" class="btn btn-md btn-danger" id="validateButton" onclick="validateForm()">Submit</button>
-          
+          </div>  
+          <button type="button" class="btn btn-md btn-info" id="backButton" style="position: absolute;">Back</button>
+          <button type="button" class="btn btn-md btn-danger" id="validateButton">Submit</button>  
         </div>
       </div>
      </form>
@@ -261,7 +275,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary" id="addCompany" onclick="addCompany()">Save</button>
+              <button type="button" class="btn btn-primary" id="addCompany">Save</button>
             </div>
           </div>
         </div>
@@ -276,12 +290,11 @@
               </button>
             </div>
             <div class="modal-body">
-              Form data submitted successfully.
+              Case data submitted successfully.
             </div>
           </div>
         </div>
       </div>
-
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script> 
@@ -293,6 +306,122 @@
           const steps = $('.step');
           var next = $('.step-item');
           let currentStep = 0;
+          var uploadedCount = 0;
+
+          function uploadFiles(files, caseID) {
+            var fileCount = files.length;
+            for (var i = 0; i < fileCount; i++) {
+              uploadDocumentName(files[i], fileCount, caseID);
+            }
+          }
+
+          function uploadDocumentName(file, fileCount, caseID) {
+            var documentName = file.name;
+            getBase64(file, function (base64Data) {
+              sendFormData({
+                complaintEvidence: base64Data,
+                documentName: documentName,
+                case_id: caseID
+              }, fileCount);
+            });
+          }
+
+          function getBase64(file, callback) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+              var base64Data = reader.result;
+              callback(base64Data);
+            };
+            reader.onerror = function (error) {
+              console.log('Error: ', error);
+              callback(null);
+            };
+          }
+
+          function sendFormData(formData, fileCount) {
+            $.ajax({
+              url: "/saveFile",
+              type: "POST",
+              data: formData,
+              success: function (response) {
+                uploadedCount++;
+                if (uploadedCount === fileCount) {
+                  $("#successModal").modal("show");
+                  setTimeout(function() {            
+                    $('#successModal').modal('hide');
+                    window.location.href = "/";  
+                  }, 3000);
+                }
+              },
+              error: function (error) {
+                console.error("Error submitting form data:", error);
+              } 
+            });
+          } 
+        
+          function saveData() {
+              $.ajax({
+                url: "/save",
+                type: "POST",
+                data: {
+                  title_of_complaint: $("#title_of_complaint").val(),
+                  choose_company: $("#choose_company").val(),
+                  total_amount: $("#total_amount").val(),
+                  complaint_details: $("#complaint_details").val(),
+                  full_name: $("#full_name").val(),
+                  state: $("#state").val(),
+                  city: $("#city").val(),
+                  zip_code: $("#zip_code").val(),
+                },
+                success: function (response) {
+                  // Handle the success response if needed
+                  $("#successModal").modal("show");
+                  setTimeout(function() {            
+                    $('#successModal').modal('hide');
+                    window.location.href = "/";  
+                  }, 3000);   
+                },
+                error: function (error) {
+                  // Handle the error response if needed
+                  console.error("Error submitting form data:", error);
+                  // Display an error message or perform appropriate actions
+                }
+              });
+            }
+
+            function saveDataWithFile(selectedFile) {
+              $.ajax({
+                url: "/save",
+                type: "POST",
+                data: {
+                  title_of_complaint: $("#title_of_complaint").val(),
+                  choose_company: $("#choose_company").val(),
+                  total_amount: $("#total_amount").val(),
+                  complaint_details: $("#complaint_details").val(),
+                  full_name: $("#full_name").val(),
+                  state: $("#state").val(),
+                  city: $("#city").val(),
+                  zip_code: $("#zip_code").val(),
+                },
+                success: function (response) {
+                  
+                  // Handle the success response if needed
+                  $("#successModal").modal("show");
+                  var caseID = response.insertId;
+                  uploadFiles(selectedFile, caseID);
+                  setTimeout(function() {            
+                    $('#successModal').modal('hide');
+                    window.location.href = "/";  
+                  }, 2000);   
+                },
+                error: function (error) {
+                  // Handle the error response if needed
+                  console.error("Error submitting form data:", error);
+                  // Display an error message or perform appropriate actions
+                }
+              });
+            }
 
           function nextStep() {
             currentStep = 0;
@@ -344,36 +473,29 @@
               if (complaintDetails === "") {
                 $("#complaint_details_error").text("Please fill the complaint details");
                 return;
-                } else if (complaintDetails.length > 60) {
-                $("#complaint_details_error").text("Complaint details should not exceed 60 characters");
-                return;
-                } else if (!/^[a-zA-Z0-9\s]*$/.test(complaintDetails)) {
-                $("#complaint_details_error").text("Complaint details should not contain special characters");
-                return;
                 } else {
                 $("#complaint_details_error").text("");
               }
-
               if (!$('input[type="checkbox"]').is(':checked')) {
                 $("#terms_conditions_error").text("Please agree to the terms and conditions");
                 return;
-                } else {
+              } else {
                 $("#terms_conditions_error").text("");
-                }
+              }
             }
-          currentStep++;
-          next.eq(currentStep).removeClass('disabled').addClass('enabled');
-          next.eq(currentStep - 1).removeClass('enabled').addClass('disabled');
-          steps.eq(currentStep - 1).removeClass('active');
-          steps.eq(currentStep).addClass('active');
+            currentStep++;
+            next.eq(currentStep).removeClass('disabled').addClass('enabled');
+            next.eq(currentStep - 1).removeClass('enabled').addClass('disabled');
+            steps.eq(currentStep - 1).removeClass('active');
+            steps.eq(currentStep).addClass('active');
           }
     
          $('.step-item.step1').click(function() {
            if(currentStep == 1){
-             steps.eq(currentStep).removeClass('active');
-             steps.eq(0).addClass('active');
-             next.eq(currentStep).removeClass('enabled').addClass('disabled');
-             next.eq(currentStep - 1).removeClass('disabled').addClass('enabled');
+              steps.eq(currentStep).removeClass('active');
+              steps.eq(0).addClass('active');
+              next.eq(currentStep).removeClass('enabled').addClass('disabled');
+              next.eq(currentStep - 1).removeClass('disabled').addClass('enabled');
             }
           });
   
@@ -381,7 +503,6 @@
            currentStep = 0;
            nextStep();
           });
-
 
           function moveBack() {
             if(currentStep == 1) {
@@ -404,11 +525,11 @@
               $("#city_error").text(city === "--Select--" ? "Please fill your city" : "");
               $("#zip_code_error").text(zipCode === "" ? "Please fill your 6-digit zip code" : "");
 
-            if ($("#full_name").val() === "") {
-              $("#full_name_error").text("Please fill your full name");
-              event.preventDefault();
-              return;
-            } else {
+              if ($("#full_name").val() === "") {
+                $("#full_name_error").text("Please fill your full name");
+                event.preventDefault();
+                return;
+              } else {
               if (fullName.length < 3 || fullName.length > 15) {
                 $("#full_name_error").text("Full name should have a minimum length of 3 characters and a maximum length of 15 characters");
                 event.preventDefault();
@@ -419,104 +540,35 @@
                 event.preventDefault();
                 return;
               }
-            }
-            if ($("#state").val() === "--Select--") {
-              $("#state_error").text("Please choose your state");
-              event.preventDefault();
-              return;
-            }
-            if ($("#city").val() === "--Select--") {
-              $("#city_error").text("Please choose your city");
-              event.preventDefault();
-              return;
-            }
-            var zipCodePattern = /^\d{6}$/;
-            if (!zipCodePattern.test(zipCode)) {
-              $("#zip_code_error").text("Please enter a 6-digit zip code without characters.");
-              event.preventDefault();
-              return;
-            }
-
-            if ($("#files").get(0).files.length === 0) {
-              $.ajax({
-                url: "/save",
-                type: "POST",
-                data: {
-                  title_of_complaint: $("#title_of_complaint").val(),
-                  choose_company: $("#choose_company").val(),
-                  total_amount: $("#total_amount").val(),
-                  complaint_details: $("#complaint_details").val(),
-                  full_name: $("#full_name").val(),
-                  state: $("#state").val(),
-                  city: $("#city").val(),
-                  zip_code: $("#zip_code").val()
-                },
-                success: function (response) {
-                  // Handle the success response if needed
-                  $("#successModal").modal("show");
-                  setTimeout(function() {            
-                    $('#successModal').modal('hide');
-                    window.location.href = "/";  
-                  }, 3000);   
-                },
-                error: function (error) {
-                  // Handle the error response if needed
-                  console.error("Error submitting form data:", error);
-                  // Display an error message or perform appropriate actions
-                }
-              });
-            } else {
-              var fileInput = document.querySelector('#files');
-              var selectedFile = fileInput.files[0];
-              var documentName = selectedFile.name;
-              var file = selectedFile;
-                
-              function getBase64(file, documentName, callback) {
-                var reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function () {
-                  var base64Data = reader.result;
-                  callback(documentName, base64Data); // Pass the document name and base64 data to the callback function
-                };
-                reader.onerror = function (error) {
-                  console.log('Error: ', error);
-                  callback(null, null); // Pass null to the callback in case of an error
-                };
               }
-              getBase64(file,documentName, function (documentName, complaintEvidence) {
-                $.ajax({
-                  url: "/save",
-                  type: "POST",
-                  data: {
-                    title_of_complaint: $("#title_of_complaint").val(),
-                    choose_company: $("#choose_company").val(),
-                    total_amount: $("#total_amount").val(),
-                    complaint_details: $("#complaint_details").val(),
-                    complaintEvidence: complaintEvidence,
-                    documentName: documentName,
-                    full_name: $("#full_name").val(),
-                    state: $("#state").val(),
-                    city: $("#city").val(),
-                    zip_code: $("#zip_code").val()
-                  },
-                  success: function (response) {
-                    $("#successModal").modal("show");
-                    setTimeout(function() {            
-                      $('#successModal').modal('hide');
-                      window.location.href = "/";  
-                    }, 3000);
-                  },
-                  error: function (error) {
-                    // Handle the error response if needed
-                    console.error("Error submitting form data:", error);
-                    // Display an error message or perform appropriate actions
-                  }
-                });
-              });
+              if ($("#state").val() === "--Select--") {
+                $("#state_error").text("Please choose your state");
+                event.preventDefault();
+                return;
+              }
+              if ($("#city").val() === "--Select--") {
+                $("#city_error").text("Please choose your city");
+                event.preventDefault();
+                return;
+              }
+              var zipCodePattern = /^\d{6}$/;
+              if (!zipCodePattern.test(zipCode)) {
+                $("#zip_code_error").text("Please enter a 6-digit zip code without characters.");
+                event.preventDefault();
+                return;
+              }
+
+              if ($("#files").get(0).files.length === 0) {
+                saveData();
+              }
+              else {
+                var fileInput = document.querySelector('#files');
+                var selectedFiles = fileInput.files;
+                saveDataWithFile(selectedFiles);
+              }
             }
           }
-          }
-
+          
           function addCompany() {
             var getCompany = $("#get_company").val();
             if (getCompany !== "") {
@@ -537,9 +589,9 @@
           }
 
          $('#state').on('change', function() {
-           var selectState = $(this).val();
-           var cityOption = [];
-           if (selectState === "TamilNadu") {
+            var selectState = $(this).val();
+            var cityOption = [];
+            if (selectState === "TamilNadu") {
               cityOption = ["--Select--","Salem", "Coimbatore", "Chennai"];
             } else if (selectState === "Kerala") {
               cityOption = ["--Select--","Cochin", "Palakkad", "Trisur"];
@@ -547,23 +599,23 @@
               cityOption = ["--Select--","Margo", "Panaji", "Valpoi"];
             }
 
-           var getValue = "";
-           for (var i = 0; i < cityOption.length; i++) {
+            var getValue = "";
+            for (var i = 0; i < cityOption.length; i++) {
               var selected = (cityOption[i] === $("#city").val()) ? "selected" : ""; // Check if the option should be selected
               getValue += "<option value='" + cityOption[i] + "' " + selected + ">" + cityOption[i] + "</option>";
             }
-           $("#city").html(getValue);
-           console.log(cityOption);
+            $("#city").html(getValue);
+            console.log(cityOption);
           });
   
-         $('#nextButton').click(nextStep);
-         $('#addCompany').click(addCompany);
-         $('#validateButton').click(validateForm);
-         $('#backButton').click(moveBack);
+          $('#nextButton').click(nextStep);
+          $('#addCompany').click(addCompany);
+          $('#validateButton').click(validateForm);
+          $('#backButton').click(moveBack);
 
-         $('input#choose_company').typeahead({
+          $('input#choose_company').typeahead({
             source: function(query, process) {
-             return $.get('/getCompany', { query: query }, function(data) {
+              return $.get('/getCompany', { query: query }, function(data) {
                console.log(data);
                return process(data);
               });
@@ -571,25 +623,36 @@
           });
         });
         $(document).ready(function() {
-          $('#files').on('change', function() {
-            var fileInput = $(this)[0];
-            var trashIcon = $('#trashIcon');
-            
-            if (fileInput.files.length > 0) {
-              trashIcon.show();
-            } else {
-              trashIcon.hide(); 
+          $('#files').on('change', handleFileSelect);
+          function handleFileSelect(event) {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+              const file = files[i];
+              const listItem = $('<li>').addClass('fileItem');
+              const fileName = $('<span>').addClass('fileName').text(file.name);
+              const removeFile = $('<span>').addClass('removeFile').text('Cancel');
+              removeFile.on('click', removeSelectedFile.bind(null, listItem, file));
+              listItem.append(fileName);
+              listItem.append(removeFile);
+              $('#fileList').append(listItem);
             }
-          });
-          
-          $('#trashIcon').on('click', function() {
-            var confirmation = confirm('Are you sure you want to remove the file?'); 
-            if (confirmation) {
-            $('#files').val(''); 
-            documentName = null;
-            $(this).hide(); 
-            }
-          });
+            updateTextArea();
+          }
+          function removeSelectedFile(listItem, file) {
+            listItem.remove();
+            updateTextArea();
+            $('#files').val(null);
+          }
+
+          function updateTextArea() {
+            const files = $('#fileList li');
+            let text = '';
+
+            files.each(function() {
+              const fileName = $(this).find('.fileName').text();
+              text += fileName + '\n';
+            });
+          }
         });
       </script>
     </body>
